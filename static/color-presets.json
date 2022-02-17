@@ -1,4 +1,22 @@
 {
+   "Identity": {
+      "Backgrounds": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "Frontcover": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "Display": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "DisplayLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "VISDisplay": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "LED": {"value": [0, 0, -0], "gray": 0, "boost": 0},
+      "Buttons": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "ButtonsFront": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "BackgroundLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "FrontcoverLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "PosLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "CoverLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "MainLabel": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "Thinger icons": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "ThingerButtons": {"value": [0, 0, 0], "gray": 0, "boost": 0},
+      "Thinger": {"value": [0, 0, 0], "gray": 0, "boost": 0}
+   }, 
    "clean | orange": {
       "Backgrounds": {"value": [0, 0, 0], "gray": 0, "boost": 0}, 
       "Frontcover": {"value": [0, 0, 0], "gray": 0, "boost": 0}, 
