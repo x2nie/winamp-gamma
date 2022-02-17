@@ -5,15 +5,50 @@
 // -------------------------------------------------------------------------
 class Filter extends Component {
     static template = xml/*html*/`
-        <filter t-att-id="props.id" color-interpolation-filters="sRGB"> 
+        <filter t-att-id="props.id" > 
             <t t-if="props.gammaSet">
-                    <feColorMatrix type="matrix" result="gray" t-if="props.gammaSet.gray==0"
-                        t-attf-values=" {{(props.gammaSet.value[0]/32+128)/255+1}} 0 0 0 0
-                        0 {{(props.gammaSet.value[1]/32+128)/255+1}} 0 0 0
-                        0 0 {{(props.gammaSet.value[2]/32+128)/255+1}} 0 0
-                        0 0 0 1 0" >
+                    <feColorMatrix type="matrix" result="grayscale" t-if="props.gammaSet.gray==20"
+                        
+                        t-attf-values=" {{(props.gammaSet.value[0]/32+128)/255-0.5+1}} 0 0 0 0
+                                      0 {{(props.gammaSet.value[1]/32+128)/255-0.5+1}} 0 0 0
+                                    0 0 {{(props.gammaSet.value[2]/32+128)/255-0.5+1}} 0 0
+                                    0 0 0 1 0" >
                     </feColorMatrix>
-                    <feColorMatrix type="matrix" result="grayscale" t-if="props.gammaSet.gray==1"
+
+                    
+                    <t t-if="props.gammaSet.gray==0">
+                        <feColorMatrix type="matrix" result="grayscale" t-if="0"
+                            t-attf-values="
+                            1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 1 0" >
+                        </feColorMatrix>
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0">
+                        <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+0.5}}"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+0.5}}"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+0.5}}"></feFuncB>
+                    </feComponentTransfer>
+                </t>
+
+
+                    <t t-if="props.gammaSet.gray==1">
+                    <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
+                    <feColorMatrix type="matrix" values=".33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        0 0 0 1 0">
+                    </feColorMatrix>
+
+                    <!-- Map the grayscale result to the gradient map provided in tableValues -->
+                    <feComponentTransfer color-interpolation-filters="sRGB">
+                        <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+1.0}}"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+1.0}}"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+1.0}}"></feFuncB>
+                    </feComponentTransfer>
+                    </t>
+
+                    <feColorMatrix type="matrix" result="gray" t-if="props.gammaSet.gray==100"
                         t-attf-values="
                         1 0 0 0 {{(props.gammaSet.value[0]/32+128)/255-0.5}}
                         0 1 0 0 {{(props.gammaSet.value[1]/32+128)/255-0.5}}
@@ -31,12 +66,13 @@ class App extends Component {
         <svg width="381" height="216" style="outline: 1px solid red">
             <defs>
                 <Filter id="'Display'" gammaSet="gammaSet.Display"/>
-                <filter id="gamma"> 
+                <Filter id="'Backgrounds'" gammaSet="gammaSet.Backgrounds"/>
+                <Filter id="'Frontcover'" gammaSet="gammaSet.Frontcover"/>
+                <!-- <filter id="gamma"> 
                     <feComponentTransfer>
                     <feFuncR type="gamma" amplitude="0.5" exponent="0.3" offset="0.0" />
                     <feFuncG type="gamma" amplitude="0.75" exponent="0.5" offset="0.0" />
                     <feFuncB type="gamma" amplitude="1.5" exponent="0.7" offset="0.0" />
-                    <!-- <feFuncA type="gamma" amplitude="1" exponent="1" offset="0.0" /> -->
                     </feComponentTransfer>
                 </filter>
                 <filter id="Backgrounds0"> 
@@ -48,7 +84,7 @@ class App extends Component {
                     </feComponentTransfer>
                     </t>
                 </filter>
-                <filter id="Backgrounds"> 
+                <filter id="Backgrounds09"> 
                     <t t-if="gammaSet.Backgrounds">
                     <feColorMatrix type="matrix" result="grayscale"
                         t-attf-values=" {{(gammaSet.Display.value[0]/32+128)/255}} 0 0 0 0
@@ -97,7 +133,7 @@ class App extends Component {
                                         0 0 0 1 0" >
                     </feColorMatrix>
                     </t>
-                </filter>
+                </filter> -->
 
                 <filter id="Display0"> 
                     <t t-if="gammaSet.Display">
@@ -108,9 +144,6 @@ class App extends Component {
                                 0 0 0 1 0" >
                     </feColorMatrix>
                     <feComponentTransfer color-interpolation-filters="sRGB" >
-                    <!-- <feFuncR type="gamma" t-att-exponent="(gammaSet.Display.value[0]/32+128)/255*10" amplitude="1" offset="0.0" />
-                    <feFuncG type="gamma" t-att-exponent="(gammaSet.Display.value[1]/32+128)/255*10" amplitude="1" offset="0.0" />
-                    <feFuncB type="gamma" t-att-exponent="(gammaSet.Display.value[2]/32+128)/255*10" amplitude="1" offset="0.0" /> -->
                     <feFuncR type="table" t-attf-tableValues="{{(gammaSet.Display.value[0]/32+128)/255}} 1"></feFuncR>
                     <feFuncG type="table" t-attf-tableValues="{{(gammaSet.Display.value[1]/32+128)/255}} 1"></feFuncG>
                     <feFuncB type="table" t-attf-tableValues="{{(gammaSet.Display.value[2]/32+128)/255}} 1"></feFuncB>
@@ -142,7 +175,10 @@ class App extends Component {
 
     constructor() {
         super(...arguments);
-        this.state = useState({ word: 'Hello', value: '1234',gammasets: {}, gammaset_name: "xbox | pink" });
+        this.state = useState({ word: 'Hello', value: '1234',gammasets: {}, 
+            // gammaset_name: "xbox | pink"
+            gammaset_name: "silver3 | yellow"
+         });
         this.editorContext = useContext(this.env.editorContext);
         // this.gamasets = {}
         // JSON.stringify()

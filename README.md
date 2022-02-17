@@ -7,3 +7,4 @@ References:
 * https://tympanus.net/codrops/2019/02/05/svg-filter-effects-duotone-images-with-fecomponenttransfer/
 * https://www.dynamsoft.com/codepool/image-processing-opencv-gamma-correction.html
 * https://webplatform.github.io/docs/svg/elements/feComponentTransfer/
+* https://css-tricks.com/using-svg-to-create-a-duotone-image-effect/

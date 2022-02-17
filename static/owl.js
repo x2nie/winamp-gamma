@@ -1954,7 +1954,7 @@
             // const shouldAddNS = node.nodeName === "svg" || (node.nodeName === "g" && ctx.rootNode === ctx.parentNode);
             const shouldAddNS = node.nodeName === "svg" || ((node.nodeName === "g" || node.nodeName === "filter") && ctx.rootNode === ctx.parentNode);
             // const shouldAddNS = node.nodeName === "svg" || ((node.nodeName === "g" || node.nodeName === "filter" || (node.nodeName[0]=='f' && node.nodeName[1]=='e')) && ctx.rootNode === ctx.parentNode);
-            console.log(node.nodeName , (node.nodeName[0]=='f' && node.nodeName[1]=='e'))
+            // console.log(node.nodeName , (node.nodeName[0]=='f' && node.nodeName[1]=='e'))
             if (shouldAddNS) {
                 ctx.rootContext.shouldDefineUtils = true;
                 ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
