@@ -48,6 +48,23 @@ class Filter extends Component {
                     </feComponentTransfer>
                     </t>
 
+                    <t t-if="props.gammaSet.gray==2">
+                    <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
+                    <feColorMatrix type="matrix" values="
+                        .22 .22 .22 0 -0.01
+                        .22 .22 .22 0 -0.01
+                        .22 .22 .22 0 -0.01
+                        0 0 0 1 0">
+                    </feColorMatrix>
+
+                    <!-- Map the grayscale result to the gradient map provided in tableValues -->
+                    <feComponentTransfer color-interpolation-filters="sRGB">
+                        <feFuncR type="table" t-attf-tableValues="{{((props.gammaSet.value[0]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[0]/32+128)/255+1}}"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="{{((props.gammaSet.value[1]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[1]/32+128)/255+1}}"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="{{((props.gammaSet.value[2]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[2]/32+128)/255+1}}"></feFuncB>
+                    </feComponentTransfer>
+                    </t>
+
                     <feColorMatrix type="matrix" result="gray" t-if="props.gammaSet.gray==100"
                         t-attf-values="
                         1 0 0 0 {{(props.gammaSet.value[0]/32+128)/255-0.5}}
@@ -177,7 +194,9 @@ class App extends Component {
         super(...arguments);
         this.state = useState({ word: 'Hello', value: '1234',gammasets: {}, 
             // gammaset_name: "xbox | pink"
-            gammaset_name: "silver3 | yellow"
+            // gammaset_name: "silver3 | yellow"
+            // gammaset_name: "clean | brown"
+            gammaset_name: "clean | blue"
          });
         this.editorContext = useContext(this.env.editorContext);
         // this.gamasets = {}

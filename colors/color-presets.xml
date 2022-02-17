@@ -1519,8 +1519,8 @@
 	<gammagroup id="ThingerButtons" value="0,0,0" gray="1" boost="0"/>
 	<gammagroup id="Thinger" value="990,990,990"/>
 </gammaset>
-
 <gammaset id="juicy | yellow">
+
 	<gammagroup id="Backgrounds" value="3000,1000,-3000"/>
 	<gammagroup id="Frontcover" value="600,600,600" gray="0" boost="0"/>
 	<gammagroup id="Display" value="4000,2100,-4000" gray="1" boost="0"/>
