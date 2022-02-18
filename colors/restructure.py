@@ -208,7 +208,7 @@ with open('color-presets0.json', 'r') as f:
 print(data['gammasets']['gammaset'][0].keys())
 
 
-res = {}
+res = OrderedDict()
 for gs in data['gammasets']['gammaset']:
     name = gs['id']
     groups = {}

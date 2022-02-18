@@ -19,22 +19,35 @@ class Filter extends Component {
                     <t t-if="props.gammaSet.gray==0">
                         <feColorMatrix type="matrix" result="grayscale" t-if="0"
                             t-attf-values="
-                            1 0 0 0 0
-                            0 1 0 0 0
-                            0 0 1 0 0
-                            0 0 0 1 0" >
+                            .33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        0 0 0 1 0">
                         </feColorMatrix>
-                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0">
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0.0">
                         <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+0.5}}"></feFuncR>
                         <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+0.5}}"></feFuncG>
                         <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+0.5}}"></feFuncB>
                     </feComponentTransfer>
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0.666">
+                        <feFuncR type="table" t-attf-tableValues="0.25 {{(props.gammaSet.value[0]/32+128)/255-0.25}}  {{(props.gammaSet.value[0]/32+128)/255+0.25}} 0.9"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="0.25 {{(props.gammaSet.value[1]/32+128)/255-0.25}}  {{(props.gammaSet.value[1]/32+128)/255+0.25}} 0.9"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="0.25 {{(props.gammaSet.value[2]/32+128)/255-0.25}}  {{(props.gammaSet.value[2]/32+128)/255+0.25}} 0.9"></feFuncB>
+                    </feComponentTransfer>
+
+                    <feComponentTransfer t-if="props.gammaSet.gray==0.055">
+                        <feFuncR type="gamma" amplitude="1.0" exponent="1.0" t-attf-offset="{{(props.gammaSet.value[0]/32+128)/255-0.5}}" />
+                        <feFuncG type="gamma" amplitude="1.0" exponent="1.0" t-attf-offset="{{(props.gammaSet.value[1]/32+128)/255-0.5}}" />
+                        <feFuncB type="gamma" amplitude="1.0" exponent="1.0" t-attf-offset="{{(props.gammaSet.value[2]/32+128)/255-0.5}}" />
+                    </feComponentTransfer>
+
                 </t>
 
 
                     <t t-if="props.gammaSet.gray==1">
                     <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
-                    <feColorMatrix type="matrix" values=".33 .33 .33 0 0
+                    <feColorMatrix type="matrix" values="
+                        .33 .33 .33 0 0
                         .33 .33 .33 0 0
                         .33 .33 .33 0 0
                         0 0 0 1 0">
@@ -80,7 +93,7 @@ class App extends Component {
     // <!-- <LcdDisplay class="wz" value="'4,4.956'" /> -->
     static template = xml/*html*/`
     <div class="app">
-        <svg width="381" height="216" style="outline: 1px solid red">
+        <svg width="381" height="216" style="outline: 1px solid red; display:inline-block;">
             <defs>
                 <Filter id="'Display'" gammaSet="gammaSet.Display"/>
                 <Filter id="'Backgrounds'" gammaSet="gammaSet.Backgrounds"/>
@@ -177,16 +190,36 @@ class App extends Component {
             <image href="static/img/front.png"  x="34" y="0" filter="url(#Frontcover)"/>
         </svg>
 
+        <svg width="381" height="216" style="outline: 1px solid green; display:inline-block; margin-left:25px">
+            <image href="static/img/Bgoverlay.png" filter0="url(#Backgrounds)"/>
+            <image href="static/img/Display.png" x="53" y="9" filter0="url(#Display)"/>
+            <image href="static/img/thinger.png" x="45" y="109" gammagroup="Thinger"/>
+            <image href="static/img/front.png"  x="34" y="0" filter0="url(#Frontcover)"/>
+        </svg>
+
         <div>
           Language:
           <select name="from" class="form-control" multiple="multiple" size="20"
                 t-model="state.gammaset_name" value="state.gammaset_name">
                 <t t-foreach="Object.keys(state.gammasets)" t-as="gammaset">
-                  <option t-att-value="gammaset" t-key="gammaset_index"><t t-raw="gammaset" /></option>
+                    <option t-att-value="gammaset" t-key="gammaset_index"><t t-raw="gammaset" /></option>
                 </t>
-              </select>
-              <button t-on-click="reset">Reset</button>
-              Selected: <t t-raw="state.gammaset_name" />
+            </select>
+            <div style="display:inline-block;">
+                <div>
+                    <t t-if="Object.keys(state.gammasets).length" t-foreach="Object.keys(state.gammasets[state.gammaset_name] || {})" t-as="gammagroup">
+                        <div t-key="gammagroup">
+                            <t t-set="RGB" t-value="state.gammasets[state.gammaset_name][gammagroup].value || [0,0,0]" />
+                            <span t-if="!(RGB[0]==0 and RGB[1]==0 and RGB[2]==0)" t-attf-style="width:50px; height:15px; display:inline-block; border:1px solid silver; background: rgb({{RGB[0]/32+128}}, {{RGB[1]/32+128}}, {{RGB[2]/32+128}});"> </span>
+                            <span t-if="RGB[0]==0 and RGB[1]==0 and RGB[2]==0" t-attf-style="width:50px; height:15px; display:inline-block; border:1px solid red;"> </span>
+                            <span t-raw="state.gammasets[state.gammaset_name][gammagroup].gray" /> <span> </span> 
+                            <t t-raw="gammagroup" />
+                        </div>
+                    </t>
+                </div>
+                <button t-on-click="reset">Reset</button>
+                Selected: <t t-raw="state.gammaset_name" />
+            </div>
         </div>
     </div>`;
 
@@ -194,9 +227,12 @@ class App extends Component {
         super(...arguments);
         this.state = useState({ word: 'Hello', value: '1234',gammasets: {}, 
             // gammaset_name: "xbox | pink"
+            gammaset_name: "DEVIANTART"
+            // gammaset_name: "silver3 | blue2"
             // gammaset_name: "silver3 | yellow"
             // gammaset_name: "clean | brown"
-            gammaset_name: "clean | blue"
+            // gammaset_name: "clean | blue"
+            // gammaset_name: "silver2 | brown"
          });
         this.editorContext = useContext(this.env.editorContext);
         // this.gamasets = {}
