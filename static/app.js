@@ -7,16 +7,60 @@ class Filter extends Component {
     static template = xml/*html*/`
         <filter t-att-id="props.id" > 
             <t t-if="props.gammaSet">
-                    <feColorMatrix type="matrix" result="grayscale" t-if="props.gammaSet.gray==20"
+                    <feColorMatrix type="matrix" result="grayscale" t-if="props.gammaSet.gray==0.05"
                         
                         t-attf-values=" {{(props.gammaSet.value[0]/32+128)/255-0.5+1}} 0 0 0 0
-                                      0 {{(props.gammaSet.value[1]/32+128)/255-0.5+1}} 0 0 0
-                                    0 0 {{(props.gammaSet.value[2]/32+128)/255-0.5+1}} 0 0
+                                      0 {{(props.gammaSet.value[1]/32+128)/255-0.5+1}}   0 0 0
+                                    0 0 {{(props.gammaSet.value[2]/32+128)/255-0.5+1}}     0 0
                                     0 0 0 1 0" >
                     </feColorMatrix>
 
                     
-                    <t t-if="props.gammaSet.gray==0">
+                    <t t-if="props.gammaSet.gray==0.09">
+                        <!-- too dark -->
+                        <!-- Map the grayscale result to the gradient map provided in tableValues -->
+                        <feComponentTransfer color-interpolation-filters="sRGB">
+                            <feFuncR type="table" t-attf-tableValues="{{-0.025+((props.gammaSet.value[0])/4096)}}  {{1.025+((props.gammaSet.value[0])/4096)}}"></feFuncR>
+                            <feFuncG type="table" t-attf-tableValues="{{-0.025+((props.gammaSet.value[1])/4096)}}  {{1.025+((props.gammaSet.value[1])/4096)}}"></feFuncG>
+                            <feFuncB type="table" t-attf-tableValues="{{-0.025+((props.gammaSet.value[2])/4096)}}  {{1.025+((props.gammaSet.value[2])/4096)}}"></feFuncB>
+                        </feComponentTransfer>
+                    </t>
+
+                    <t t-if="props.gammaSet.gray==0.05">
+                    <feComponentTransfer>
+                        <feFuncR type="linear" t-attf-slope="{{1+((props.gammaSet.value[0]+0)/4096)}}" intercept="0"></feFuncR>
+                        <feFuncG type="linear" t-attf-slope="{{1+((props.gammaSet.value[1]+0)/4096)}}" intercept="0"></feFuncG>
+                        <feFuncB type="linear" t-attf-slope="{{1+((props.gammaSet.value[2]+0)/4096)}}" intercept="0"></feFuncB>
+                    </feComponentTransfer>
+                    </t>
+                    
+                    <t t-if="props.gammaSet.gray==0.0977">
+                        <feColorMatrix type="matrix" result="grayscale"
+                        t-attf-values="
+                                {{(1+(props.gammaSet.value[0]+0)/4096)}} 0 0 0 0
+                            0   {{(1+(props.gammaSet.value[1]+0)/4096)}}   0 0 0
+                            0 0 {{(1+(props.gammaSet.value[2]+0)/4096)}}     0 0
+                            0 0 0 1 0" >
+                        </feColorMatrix>
+                    </t>
+                    
+                    <t t-if="props.gammaSet.gray==0.0">
+                    <feComponentTransfer color-interpolation-filters="sRGB" >
+                        <feFuncR type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[0]/4096)+1}}" />
+                        <feFuncG type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[1]/4096)+1}}" />
+                        <feFuncB type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[2]/4096)+1}}" />
+                    </feComponentTransfer>
+                    </t>
+                    
+                    <t t-if="props.gammaSet.gray==0.0001">
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0.0">
+                        <feFuncR type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[0] >> 12)+1}}" />
+                        <feFuncG type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[1] >> 12)+1}}" />
+                        <feFuncB type="gamma" offset="0" exponent="1.0" t-attf-amplitude="{{(props.gammaSet.value[2] >> 12)+1}}" />
+                    </feComponentTransfer>
+                    </t>
+                    
+                    <t t-if="props.gammaSet.gray==0.99">
                         <feColorMatrix type="matrix" result="grayscale" t-if="0"
                             t-attf-values="
                             .33 .33 .33 0 0
@@ -24,7 +68,7 @@ class Filter extends Component {
                         .33 .33 .33 0 0
                         0 0 0 1 0">
                         </feColorMatrix>
-                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="props.gammaSet.gray==0.0">
+                    <feComponentTransfer color-interpolation-filters="sRGB" result="grayscale"  t-if="1">
                         <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+0.5}}"></feFuncR>
                         <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+0.5}}"></feFuncG>
                         <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+0.5}}"></feFuncB>
@@ -45,23 +89,57 @@ class Filter extends Component {
 
 
                     <t t-if="props.gammaSet.gray==1">
-                    <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
-                    <feColorMatrix type="matrix" values="
-                        .33 .33 .33 0 0
-                        .33 .33 .33 0 0
-                        .33 .33 .33 0 0
+                        <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
+                        <feColorMatrix type="matrix" t-if="1"
+                        values="
+                        .334 .334 .334 0 0
+                        .334 .334 .334 0 0
+                        .334 .334 .334 0 0
                         0 0 0 1 0">
                     </feColorMatrix>
+                    <!-- <feColorMatrix type="saturate" values="1.5" /> -->
 
                     <!-- Map the grayscale result to the gradient map provided in tableValues -->
-                    <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="0">
                         <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+1.0}}"></feFuncR>
                         <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+1.0}}"></feFuncG>
                         <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+1.0}}"></feFuncB>
                     </feComponentTransfer>
+
+                    <feComponentTransfer color-interpolation-filters="sRGB" result="grayscale"  t-if="1">
+                        <feFuncR type="gamma" offset0="0" exponent="0.75" t-attf-amplitude="{{(props.gammaSet.value[0]/4096)+1.0}}" t-attf-offset0="{{(props.gammaSet.value[0]/4096)+1.0}}"/>
+                        <feFuncG type="gamma" offset0="0" exponent="0.75" t-attf-amplitude="{{(props.gammaSet.value[1]/4096)+1.0}}" t-attf-offset0="{{(props.gammaSet.value[1]/4096)+1.0}}"/>
+                        <feFuncB type="gamma" offset0="0" exponent="0.75" t-attf-amplitude="{{(props.gammaSet.value[2]/4096)+1.0}}" t-attf-offset0="{{(props.gammaSet.value[2]/4096)+1.0}}"/>
+                    </feComponentTransfer>
+
                     </t>
 
                     <t t-if="props.gammaSet.gray==2">
+                    <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
+                    <feColorMatrix type="matrix" t-if="1"
+                        values="
+                        .33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        .33 .33 .33 0 0
+                        0 0 0 1 0">
+                    </feColorMatrix>
+
+                    <!-- Map the grayscale result to the gradient map provided in tableValues -->
+                    <feComponentTransfer color-interpolation-filters="sRGB" t-if="0">
+                        <feFuncR type="table" t-attf-tableValues="{{(props.gammaSet.value[0]/32+128)/255-0.5}}  {{(props.gammaSet.value[0]/32+128)/255+1.0}}"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="{{(props.gammaSet.value[1]/32+128)/255-0.5}}  {{(props.gammaSet.value[1]/32+128)/255+1.0}}"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="{{(props.gammaSet.value[2]/32+128)/255-0.5}}  {{(props.gammaSet.value[2]/32+128)/255+1.0}}"></feFuncB>
+                    </feComponentTransfer>
+
+                    <feComponentTransfer color-interpolation-filters="sRGB" result0="grayscale" t-if="1">
+                        <feFuncR type="gamma" offset="0.0" exponent="1" t-attf-amplitude="{{(props.gammaSet.value[0]/4096)+1}}" />
+                        <feFuncG type="gamma" offset="0.0" exponent="1" t-attf-amplitude="{{(props.gammaSet.value[1]/4096)+1}}" />
+                        <feFuncB type="gamma" offset="0.0" exponent="1" t-attf-amplitude="{{(props.gammaSet.value[2]/4096)+1}}" />
+                    </feComponentTransfer>
+
+                    </t>
+
+                    <t t-if="props.gammaSet.gray==2.999">
                     <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
                     <feColorMatrix type="matrix" values="
                         .22 .22 .22 0 -0.01
@@ -71,10 +149,10 @@ class Filter extends Component {
                     </feColorMatrix>
 
                     <!-- Map the grayscale result to the gradient map provided in tableValues -->
-                    <feComponentTransfer color-interpolation-filters="sRGB">
-                        <feFuncR type="table" t-attf-tableValues="{{((props.gammaSet.value[0]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[0]/32+128)/255+1}}"></feFuncR>
-                        <feFuncG type="table" t-attf-tableValues="{{((props.gammaSet.value[1]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[1]/32+128)/255+1}}"></feFuncG>
-                        <feFuncB type="table" t-attf-tableValues="{{((props.gammaSet.value[2]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[2]/32+128)/255+1}}"></feFuncB>
+                    <feComponentTransfer result="gray" color-interpolation-filters="sRGB">
+                        <feFuncR type="table" t-attf-tableValues="{{((props.gammaSet.value[0]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[0]/32+128)/255/1+0.75}}"></feFuncR>
+                        <feFuncG type="table" t-attf-tableValues="{{((props.gammaSet.value[1]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[1]/32+128)/255/1+0.75}}"></feFuncG>
+                        <feFuncB type="table" t-attf-tableValues="{{((props.gammaSet.value[2]/32+128)/255-0.5)/2}}  {{(props.gammaSet.value[2]/32+128)/255/1+0.75}}"></feFuncB>
                     </feComponentTransfer>
                     </t>
 
@@ -98,6 +176,7 @@ class App extends Component {
                 <Filter id="'Display'" gammaSet="gammaSet.Display"/>
                 <Filter id="'Backgrounds'" gammaSet="gammaSet.Backgrounds"/>
                 <Filter id="'Frontcover'" gammaSet="gammaSet.Frontcover"/>
+                <Filter id="'Buttons'" gammaSet="gammaSet.Buttons"/>
                 <!-- <filter id="gamma"> 
                     <feComponentTransfer>
                     <feFuncR type="gamma" amplitude="0.5" exponent="0.3" offset="0.0" />
@@ -188,6 +267,12 @@ class App extends Component {
             <image href="static/img/Display.png" x="53" y="9" filter="url(#Display)"/>
             <image href="static/img/thinger.png" x="45" y="109" gammagroup="Thinger"/>
             <image href="static/img/front.png"  x="34" y="0" filter="url(#Frontcover)"/>
+            <svg x="11px" y="55px" width="19px" height="19px" viewBox="2 25 19 19">
+                <image href="static/img/b_toggle.png" note="suffle"  filter="url(#Buttons)"/>
+            </svg>
+            <svg x="15px" y="80px" width="19px" height="19px" viewBox="6 50 19 19">
+                <image href="static/img/b_toggle.png" note="repeat"  filter="url(#Buttons)"/>
+            </svg>
         </svg>
 
         <svg width="381" height="216" style="outline: 1px solid green; display:inline-block; margin-left:25px">
@@ -209,11 +294,13 @@ class App extends Component {
                 <div>
                     <t t-if="Object.keys(state.gammasets).length" t-foreach="Object.keys(state.gammasets[state.gammaset_name] || {})" t-as="gammagroup">
                         <div t-key="gammagroup">
+                            <mute>g</mute><span t-raw="state.gammasets[state.gammaset_name][gammagroup].gray" /> <span> </span> 
                             <t t-set="RGB" t-value="state.gammasets[state.gammaset_name][gammagroup].value || [0,0,0]" />
                             <span t-if="!(RGB[0]==0 and RGB[1]==0 and RGB[2]==0)" t-attf-style="width:50px; height:15px; display:inline-block; border:1px solid silver; background: rgb({{RGB[0]/32+128}}, {{RGB[1]/32+128}}, {{RGB[2]/32+128}});"> </span>
                             <span t-if="RGB[0]==0 and RGB[1]==0 and RGB[2]==0" t-attf-style="width:50px; height:15px; display:inline-block; border:1px solid red;"> </span>
-                            <span t-raw="state.gammasets[state.gammaset_name][gammagroup].gray" /> <span> </span> 
+                            <mute>b</mute><span t-raw="state.gammasets[state.gammaset_name][gammagroup].boost" /> <span> </span> 
                             <t t-raw="gammagroup" />
+                            (<t t-raw="RGB[0]" />, <t t-raw="RGB[1]" />, <t t-raw="RGB[2]" />) 
                         </div>
                     </t>
                 </div>
@@ -227,12 +314,18 @@ class App extends Component {
         super(...arguments);
         this.state = useState({ word: 'Hello', value: '1234',gammasets: {}, 
             // gammaset_name: "xbox | pink"
-            gammaset_name: "DEVIANTART"
+            // gammaset_name: "WinXP1"
+            // gammaset_name: "xbox | blue"
+            // gammaset_name: "xbox | orange"
+            // gammaset_name: "xbox | original"
+            // gammaset_name: "DEVIANTART"
             // gammaset_name: "silver3 | blue2"
             // gammaset_name: "silver3 | yellow"
+            gammaset_name: "silver3 | slateblue"
             // gammaset_name: "clean | brown"
             // gammaset_name: "clean | blue"
             // gammaset_name: "silver2 | brown"
+            // gammaset_name: "SHINY | beer"
          });
         this.editorContext = useContext(this.env.editorContext);
         // this.gamasets = {}

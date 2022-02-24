@@ -1,0 +1,80 @@
+select {
+    width: 150px;
+    overflow: scroll;
+    outline: none;
+}
+select option{ width: 151px; }
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 13px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    /* -webkit-border-radius: 10px; */
+    /* border-radius: 10px; */
+}
+::-webkit-scrollbar-button {
+    background-image: url(img/Window-elements.png);
+    background-position: top -37px left 0;
+}
+::-webkit-scrollbar-button:vertical {
+    height: 18px;
+}
+::-webkit-scrollbar-button:vertical:increment {
+    background-position-y: -96px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    /* -webkit-border-radius: 10px; */
+    /* border-radius: 10px; */
+    /* background: rgba(255,0,0,0.8);  */
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);  */
+    background-color: fuchsia;
+    background-image: url(img/Window-elements.png);
+    background-position: top -55px left 0;
+    /* background-size: 13px 35px; */
+    /* background-size-y: 35px; */
+    /* background-clip: border-box; */
+    background-repeat: repeat;
+}
+::-webkit-scrollbar-thumb {
+    max-height: 42px;
+    min-height: 42px;
+    transform: scaleY(3);
+    position: relative;
+    display: block;
+    z-index: 1;
+}
+::-webkit-scrollbar-thumb::after {
+    content: 'HALO';
+    position: absolute;
+    display: block;
+    inset: 0;
+    background: rgba(255, 230, 0, 1);
+    z-index: 100;
+}
+/* ::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,0,0,0.4); 
+} */
+
+/*? HORIZONTAL */
+::-webkit-scrollbar:horizontal {
+    height: 13px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb:horizontal {
+    background-position: top -13px left -57px;
+
+}
+::-webkit-scrollbar-button:horizontal {
+    background-position: top -13px left -40px;
+    width: 17px;
+}
+::-webkit-scrollbar-button:horizontal:increment {
+    background-position: top -13px left -98px;
+    
+}
