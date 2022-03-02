@@ -40,8 +40,19 @@ References:
     The 'gammagroup' object is an element that defines specific GUI element (for example: Titlebar). It contains 'id', 'value', 'gray' and 'boost' attributes.
 
     The `id` attribute declares the name of GUI element that we want to describe
-    The value attribute declares the color of specific GUI element (in RGB or HSL scale, scope is -4096 to 4096)
+    The `value` attribute declares the color of specific GUI element (in RGB or HSL scale, scope is -4096 to 4096)
     The `gray` attribute defines grayscale value (1 or 2). 
         When set to "1" the gammagroup elements will be treated as having a light gray base. 
         When set to "2" the gammagroup elements will be treated as having a dark gray base.
     The `boost` attribute defines saturation (0 or 1). When set to "1", boost brightens up the gammagroup by adding 50% more white to it.
+
+* http://srufaculty.sru.edu/david.dailey/svg/SVGOpen2010/filters2.htm
+    SVG Filter demos
+
+* https://www.hackification.io/blog/2020/08/10/svg-effect-shiny-metal/
+    Shiny-metal effect
+
+* https://stackoverflow.com/a/47860596
+    SVG: Chains along a path
+* https://gist.github.com/watous/b634d3d1d266ce161d3b0d05d423b7df/
+    path pattern examples
